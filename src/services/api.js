@@ -1,19 +1,20 @@
-const BASE_URL = "http://localhost:8080/api/v1"
+const BASE_URL = import.meta.env.VITE_API_URL + "/api/v1";
 
 export async function apiFetch(endpoint, options = {}) {
-
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     headers: {
       "Content-Type": "application/json"
     },
     ...options
-  })
+  });
 
   if (!response.ok) {
-    throw new Error("API Error")
+    // Mejor manejo de errores (evita contaminar estado)
+    const errorText = await response.text();
+    throw new Error(errorText || "API Error");
   }
 
-  if (response.status === 204) return null
+  if (response.status === 204) return null;
 
-  return response.json()
+  return response.json();
 }
